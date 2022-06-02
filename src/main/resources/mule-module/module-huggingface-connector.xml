@@ -65,4 +65,28 @@
         </body>
         <output type="any"/>
     </operation>
+    <operation name="table-question-answering" doc:description="Answer questions based on a given table">
+        <parameters>
+            <parameter name="question" displayName="Question" type="string"></parameter>
+            <parameter name="table" displayName="Table" type="any"></parameter>
+        </parameters>
+        <body>
+            <http:request method="POST" config-ref="HuggingFace_Configuration" path="/google/tapas-base-finetuned-wtq">
+            <http:body><![CDATA[#[output application/json
+            ---
+            {
+                "inputs": {
+                    "query": vars.question,
+                    "table": vars.table
+                }
+            }]]]></http:body>
+            <http:headers><![CDATA[#[output application/java
+            ---
+            {
+                "Authorization" : "Bearer " ++ vars.apiKey
+            }]]]></http:headers>
+            </http:request>
+        </body>
+        <output type="any"/>
+    </operation>
  </module>
