@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="HuggingFace Connector"
+        prefix="module-huggingface-connector"
+        doc:description="This module relies in runtime provided components"
+
+        xmlns="http://www.mulesoft.org/schema/mule/module"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+        xmlns:tns="http://www.mulesoft.org/schema/mule/module-huggingface-connector"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:http="http://www.mulesoft.org/schema/mule/http"
+        xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+        xsi:schemaLocation="
+           http://www.mulesoft.org/schema/mule/module http://www.mulesoft.org/schema/mule/module/current/mule-module.xsd
+           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+           http://www.mulesoft.org/schema/mule/module-huggingface-connector http://www.mulesoft.org/schema/mule/module-huggingface-connector/current/mule-module-huggingface-connector.xsd
+           http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+           http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <property name="apiKey" type="string"/>
+
+    <http:request-config name="HuggingFace_Configuration" basePath="/models" >
+        <http:request-connection protocol="HTTPS" host="api-inference.huggingface.co" port="443" />
+    </http:request-config>
+
+    <operation name="english-to-german" doc:description="Translate English to German (Helinksi)">
+        <parameters>
+            <parameter name="englishString" type="string"></parameter>
+        </parameters>
+        <body>
+            <http:request method="POST" config-ref="HuggingFace_Configuration" path="/Helsinki-NLP/opus-mt-en-de">
+            <http:body><![CDATA[#[{
+                "inputs": vars.englishString
+            }]]]></http:body>
+            <http:headers><![CDATA[#[output application/java
+            ---
+            {
+                "Authorization" : "Bearer " ++ vars.apiKey
+            }]]]></http:headers>
+            </http:request>
+        </body>
+        <output type="any"/>
+    </operation>
+    <operation name="question-answering" doc:description="Answer questions based on context">
+        <parameters>
+            <parameter name="question" displayName="Question" type="string"></parameter>
+            <parameter name="context" displayName="Context" type="string"></parameter>
+        </parameters>
+        <body>
+            <http:request method="POST" config-ref="HuggingFace_Configuration" path="/deepset/roberta-base-squad2">
+            <http:body><![CDATA[#[output application/json
+            ---
+            {
+                "inputs": {
+                    "question": vars.question,
+                    "context": vars.context
+                }
+            }]]]></http:body>
+            <http:headers><![CDATA[#[output application/java
+            ---
+            {
+                "Authorization" : "Bearer " ++ vars.apiKey
+            }]]]></http:headers>
+            </http:request>
+        </body>
+        <output type="any"/>
+    </operation>
+ </module>
