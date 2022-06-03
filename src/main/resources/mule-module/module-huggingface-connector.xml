@@ -38,8 +38,9 @@
                 "Authorization" : "Bearer " ++ vars.apiKey
             }]]]></http:headers>
             </http:request>
+            <mule:set-payload value="#[payload[0]]"/>
         </body>
-        <output type="any"/>
+        <output type="TranslationOutput"/>
     </operation>
     <operation name="question-answering" doc:description="Answer questions based on context">
         <parameters>
@@ -62,8 +63,9 @@
                 "Authorization" : "Bearer " ++ vars.apiKey
             }]]]></http:headers>
             </http:request>
+            <mule:set-payload value="#[output application/json --- {'confidence': payload.score, 'answer': payload.answer}]"/>
         </body>
-        <output type="any"/>
+        <output type="QuestionAnsweringOutput"/>
     </operation>
     <operation name="table-question-answering" doc:description="Answer questions based on a given table">
         <parameters>
@@ -86,7 +88,29 @@
                 "Authorization" : "Bearer " ++ vars.apiKey
             }]]]></http:headers>
             </http:request>
+            <mule:set-payload value='#[%dw 2.0 output application/json import * from dw::core::Arrays var operation = trim((payload.answer splitBy(">"))[0]) var values = drop(payload.answer splitBy(">"), 1) map ((value, index) -> trim(value) as Number) --- if (operation == "AVERAGE")  {     "answer": avg(values)  } else if (operation == "SUM") {     "answer": sum(values) as String } else if (operation == "COUNT") {     "answer": sizeOf(values) as String } else {     "answer": payload.answer }]'/>
         </body>
-        <output type="any"/>
+        <output type="TableQuestionAnsweringOutput"/>
+    </operation>
+    <operation name="summarization" doc:description="Summarize a given text">
+        <parameters>
+            <parameter name="text" displayName="Source Text" type="string"></parameter>
+        </parameters>
+        <body>
+            <http:request method="POST" config-ref="HuggingFace_Configuration" path="/facebook/bart-large-cnn">
+            <http:body><![CDATA[#[output application/json
+            ---
+            {
+                "inputs": vars.text
+            }]]]></http:body>
+            <http:headers><![CDATA[#[output application/java
+            ---
+            {
+                "Authorization" : "Bearer " ++ vars.apiKey
+            }]]]></http:headers>
+            </http:request>
+            <mule:set-payload value="#[payload[0]"/>
+        </body>
+        <output type="SummarizationOutput"/>
     </operation>
  </module>

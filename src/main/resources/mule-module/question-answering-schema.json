@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "properties": {
+        "confidence": {
+            "type": "number"
+        },
+        "answer": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": false
+}

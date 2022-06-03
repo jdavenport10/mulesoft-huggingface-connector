@@ -1,0 +1,9 @@
+{
+    "type": "object",
+    "properties": {
+        "summary_text": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": false
+}

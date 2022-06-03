@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogs xmlns="http://www.mulesoft.org/schema/mule/types" >
+
+    <catalog name="SummarizationOutput" format="application/json">
+        <schema format="application/json+schema" location="./summarization-schema.json" />
+    </catalog>
+    
+    <catalog name="QuestionAnsweringOutput" format="application/json">
+        <schema format="application/json+schema" location="./question-answering-schema.json" />
+    </catalog>
+
+    <catalog name="TranslationOutput" format="application/json">
+        <schema format="application/json+schema" location="./translation-schema.json" />
+    </catalog>
+
+    <catalog name="TableQuestionAnsweringOutput" format="application/json">
+        <schema format="application/json+schema" location="./table-question-answering-schema.json" />
+    </catalog>
+
+</catalogs>

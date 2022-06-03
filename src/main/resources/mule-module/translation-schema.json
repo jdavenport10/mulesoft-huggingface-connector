@@ -1,0 +1,9 @@
+{
+    "type": "object",
+    "properties": {
+        "translation_text": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": false
+}
