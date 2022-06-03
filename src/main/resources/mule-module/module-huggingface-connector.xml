@@ -113,4 +113,24 @@
         </body>
         <output type="SummarizationOutput"/>
     </operation>
+    <operation name="execute-model" doc:description="Execute against any model in the HuggingFace repository">
+        <parameters>
+            <parameter name="modelUrl" displayName="Model URL Path" type="string"></parameter>
+            <parameter name="dataInput" displayName="Data Input" type="any"></parameter>
+        </parameters>
+        <body>
+            <http:request method="POST" config-ref="HuggingFace_Configuration" path="#[vars.modelUrl]">
+            <http:body><![CDATA[#[output application/json
+            ---
+            vars.dataInput
+            ]]]></http:body>
+            <http:headers><![CDATA[#[output application/java
+            ---
+            {
+                "Authorization" : "Bearer " ++ vars.apiKey
+            }]]]></http:headers>
+            </http:request>
+        </body>
+        <output type="any"/>
+    </operation>
  </module>
